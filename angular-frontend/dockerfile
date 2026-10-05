@@ -1,0 +1,29 @@
+# Use Node.js 16 as the base image for Angular 14
+FROM node:16-alpine AS build
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy application source
+COPY . .
+
+# Build Angular application
+RUN npm run build
+
+# Use NGINX as production web server
+FROM nginx:alpine
+
+# Copy Angular build output to NGINX
+COPY --from=build /usr/src/app/dist/angular-frontend /usr/share/nginx/html
+
+# Expose HTTP port
+EXPOSE 80
+
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
