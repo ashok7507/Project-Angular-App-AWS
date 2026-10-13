@@ -134,3 +134,39 @@ EXPOSE 80
 
 # Start NGINX server when the container starts
 CMD ["nginx", "-g", "daemon off;"]
+
+
+
+```dockerfile
+# Use official Node.js image as the base image
+FROM node:16.20.2-alpine as build
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Install the required npm version
+RUN npm install -g npm@8.19.4
+
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
+
+# Install project dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the Angular application
+RUN npm run build
+
+# Use NGINX as the production server
+FROM nginx:alpine
+
+# Copy the built artifact from the previous stage to NGINX web server directory
+COPY --from=build /usr/src/app/dist/real-estate-frontend /usr/share/nginx/html
+
+# Expose port 80 to the outside world
+EXPOSE 80
+
+# Start NGINX server when the container starts
+CMD ["nginx", "-g", "daemon off;"]
