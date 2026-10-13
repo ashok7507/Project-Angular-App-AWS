@@ -75,3 +75,37 @@ EXPOSE 8080
 # Command to run the application
 CMD ["java", "-jar", "target/spring-backend-v1.jar"]
 ```
+```dockerfile
+# Use Ubuntu as base image
+FROM ubuntu:22.04
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk curl tar && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Maven 3.9.16
+RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.16/binaries/apache-maven-3.9.16-bin.tar.gz \
+    -o /tmp/maven.tar.gz && \
+    tar -xzf /tmp/maven.tar.gz -C /opt && \
+    rm /tmp/maven.tar.gz
+
+# Set Maven environment variables
+ENV MAVEN_HOME=/opt/apache-maven-3.9.16
+ENV PATH="${MAVEN_HOME}/bin:${PATH}"
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the Maven project directory into the container
+COPY . /app
+
+# Build the Maven project
+RUN mvn clean package -Dmaven.test.skip=true
+
+# Expose the port the application runs on
+EXPOSE 8080
+
+# Command to run the application
+CMD ["java", "-jar", "target/spring-backend-v1.jar"]
+```
