@@ -135,7 +135,7 @@ EXPOSE 80
 # Start NGINX server when the container starts
 CMD ["nginx", "-g", "daemon off;"]
 
-
+```
 
 ```dockerfile
 # Use official Node.js image as the base image
@@ -170,3 +170,5 @@ EXPOSE 80
 
 # Start NGINX server when the container starts
 CMD ["nginx", "-g", "daemon off;"]
+
+```
